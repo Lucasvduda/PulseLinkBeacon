@@ -1,0 +1,11 @@
+{
+  "deviceId": 1,
+  "smokeDetected": false,
+  "impactDetected": false,
+  "temperatureCelsius": 28.4,
+  "batteryLevel": 87,
+  "latitude": -23.9955,
+  "longitude": -46.3051,
+  "satelliteConnected": true,
+  "signalStrength": 80
+}

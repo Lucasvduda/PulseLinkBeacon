@@ -1,0 +1,33 @@
+{
+  "expo": {
+    "name": "PulseLink Beacon",
+    "slug": "pulselink-beacon",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#0a0f1e"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.pulselinkproject.mobile"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#0a0f1e"
+      },
+      "package": "com.pulselinkproject.mobile"
+    },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Allow PulseLink to access your location."
+        }
+      ],
+      "expo-asset",
+      "expo-font"
+    ]
+  }
+}

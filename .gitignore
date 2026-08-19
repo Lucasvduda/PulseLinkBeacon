@@ -1,0 +1,31 @@
+# --- Frontend (Expo/React Native) ---
+frontend/node_modules/
+frontend/.expo/
+frontend/dist/
+frontend/web-build/
+
+# --- IoT Simulator (Python) ---
+iot-simulator/__pycache__/
+iot-simulator/venv/
+iot-simulator/.venv/
+*.py[cod]
+
+# --- Backend Java (backendPulseLink) já tem .gitignore próprio ---
+
+# --- Variáveis de ambiente / segredos (NUNCA versionar) ---
+.env
+.env.*
+!.env.example
+
+# --- Credenciais de desenvolvimento (JWT secret, usuários/senhas de teste) ---
+credenciais_dev.txt
+credenciais*.txt
+CREDENCIAIS*.txt
+
+# --- IDE ---
+.vscode/
+.idea/
+
+# --- OS ---
+.DS_Store
+Thumbs.db

@@ -1,0 +1,12 @@
+{
+  "deviceId": 1,
+  "smokeDetected": false,
+  "impactDetected": false,
+  "temperatureCelsius": 27.0,
+  "batteryLevel": 82,
+  "latitude": -23.9960,
+  "longitude": -46.3055,
+  "satelliteConnected": true,
+  "signalStrength": 68,
+  "_comment": "Botão físico SOS acionado — cria alerta via POST /api/alerts diretamente"
+}

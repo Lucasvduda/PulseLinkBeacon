@@ -1,0 +1,53 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: pulselink
+
+  # Carrega o .env da pasta do backend como se fosse um application.properties
+  # (arquivo .env é ignorado pelo git — ver .env.example)
+  config:
+    import: optional:file:.env[.properties]
+
+  datasource:
+    url: jdbc:h2:mem:pulselinkdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  # PostgreSQL profile (set spring.profiles.active=prod to use):
+  # datasource:
+  #   url: jdbc:postgresql://localhost:5432/pulselinkdb
+  #   username: postgres
+  #   password: yourpassword
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: always
+
+# JWT Configuration
+# Em produção, defina JWT_SECRET no .env (nunca commitar o valor real aqui).
+# O valor abaixo é só um fallback de desenvolvimento para quem clonar sem .env.
+jwt:
+  secret: ${JWT_SECRET:ChangeThisDevOnlyJwtSecretPulseLinkBeacon2026MinLength32Chars}
+  expiration: ${JWT_EXPIRATION:86400000}  # 24 hours in milliseconds

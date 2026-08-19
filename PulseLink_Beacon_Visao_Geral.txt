@@ -1,0 +1,251 @@
+PULSELINK BEACON - VISAO GERAL DO PROJETO
+
+1. OBJETIVO DO PROJETO
+
+O PulseLink Beacon foi desenvolvido para detectar e reportar emergencias em regioes remotas onde nao existe infraestrutura confiavel de comunicacao.
+
+O objetivo principal e permitir resposta rapida em situacoes criticas mesmo quando nao ha:
+- sinal de celular;
+- internet;
+- intervencao humana imediata.
+
+Em resumo, o sistema busca salvar vidas por meio de deteccao automatica de risco, envio de SOS e monitoramento centralizado.
+
+
+2. PROBLEMA QUE O PROJETO RESOLVE
+
+Em areas de mata, montanha, garimpo, fazendas isoladas e travessias remotas, a comunicacao tradicional falha em momentos de risco.
+
+As principais dificuldades sao:
+- vitima inconsciente ou sem condicoes de pedir socorro;
+- celular descarregado ou sem cobertura;
+- atraso no acionamento do resgate;
+- baixa visibilidade operacional para equipes de emergencia.
+
+O PulseLink Beacon resolve esse gap com um dispositivo IoT autonomo e uma plataforma de monitoramento.
+
+
+3. COMO O SISTEMA FUNCIONA (FLUXO GERAL)
+
+Fluxo ponta a ponta:
+
+1) Sensores detectam uma anomalia
+   - Ex.: fumaca, impacto forte, temperatura critica, SOS fisico.
+
+2) Beacon processa o evento
+   - Junta dados dos sensores + localizacao GPS + status do dispositivo.
+
+3) Evento e enviado para o backend
+   - Comunicacao satelital simulada via scripts/JSON no MVP.
+
+4) Backend aplica regras
+   - Cria alerta automaticamente quando condicoes de risco sao detectadas.
+
+5) Dados sao armazenados
+   - Banco registra dispositivos, leituras, alertas e historico.
+
+6) App mobile exibe em tempo real
+   - Dashboard, lista de emergencias, mapa e operacoes de resposta.
+
+
+4. COMPONENTES DA SOLUCAO
+
+4.1) IoT (PulseLink Beacon)
+
+Papel:
+- Coleta dados dos sensores;
+- Detecta risco automaticamente;
+- Envia SOS sem depender de acao manual.
+
+Sensores e sinais simulados no projeto:
+- GPS;
+- sensor de fumaca;
+- sensor de impacto;
+- sensor de temperatura;
+- botao fisico SOS;
+- conectividade satelital simulada.
+
+
+4.2) Backend (Spring Boot)
+
+Papel:
+- Receber leituras de sensores;
+- Atualizar estado dos beacons (heartbeat);
+- Criar e gerenciar alertas;
+- Expor API REST para o aplicativo.
+
+Arquitetura aplicada:
+- Controller -> Service -> Repository -> Banco.
+
+Entidades principais:
+- Device (dispositivo);
+- SensorReading (leitura de sensores);
+- Alert (alerta de emergencia).
+
+Regras automaticas implementadas:
+- fumaca detectada -> alerta FIRE (risco CRITICAL);
+- impacto detectado -> alerta IMPACT (risco HIGH);
+- temperatura alta -> alerta HIGH_TEMPERATURE (risco HIGH);
+- bateria muito baixa -> alerta LOW_BATTERY (risco MEDIUM);
+- SOS manual -> alerta SOS_BUTTON (risco CRITICAL).
+
+
+4.3) App Mobile (React Native + Expo)
+
+Papel:
+- Nao substitui o beacon;
+- Funciona como central de monitoramento e operacao.
+
+Funcionalidades:
+- Dashboard:
+  status dos beacons, bateria, ultimo sinal, conectividade.
+
+- Emergencias:
+  lista de SOS ativos, nivel de risco, hora e local;
+  acoes de reconhecer e resolver alerta.
+
+- Mapa:
+  visualizacao de dispositivos e ocorrencias em mapa.
+
+- Configuracoes:
+  cadastro de beacon e envio de SOS manual operacional.
+
+
+4.4) Simulador IoT
+
+Papel:
+- Validar o sistema sem hardware real nesta fase;
+- Gerar eventos de incendio, impacto, SOS e estado normal.
+
+Implementacao:
+- Scripts Python + cenarios JSON;
+- Envio para API via REST.
+
+
+4.5) Onde os beacons ficam (modelo de implantacao)
+
+O projeto adota modelo hibrido para cobrir melhor cenarios remotos:
+
+- Beacon fixo em pontos estrategicos:
+   entradas de trilha, bases de apoio, areas de risco, abrigos e locais criticos.
+   Ideal para monitoramento ambiental continuo e referencia de localizacao.
+
+- Beacon pessoal (portatil/vestivel):
+   fica com a pessoa (colete, mochila, capacete ou veiculo).
+   Ideal para acidentes individuais e SOS em deslocamento.
+
+Recomendacao para operacao:
+- usar beacons fixos para cobertura territorial;
+- usar beacons pessoais para seguranca individual da equipe e visitantes.
+
+
+4.6) Energia e bateria (autonomia em campo)
+
+Como o sistema foi pensado para locais sem infraestrutura eletrica, a alimentacao pode combinar:
+
+- bateria recarregavel de longa duracao (base principal);
+- recarga por painel solar compacto integrado (manutencao de carga no campo);
+- modo de baixo consumo para aumentar autonomia;
+- envio inteligente de dados (intervalos adaptativos) para economizar energia.
+
+Com isso, o beacon pode operar por longos periodos com baixa necessidade de intervencao humana,
+mesmo em regioes remotas sem rede eletrica convencional.
+
+
+5. SISTEMA DE AUTENTICACAO
+
+O PulseLink Beacon implementa autenticacao baseada em JWT (JSON Web Token)
+com Spring Security, garantindo acesso controlado ao sistema.
+
+5.1) Tecnologias utilizadas:
+- Spring Security (configuracao de seguranca)
+- JWT (JSON Web Token) para autenticacao stateless
+- BCrypt para hash de senhas
+- AsyncStorage no app mobile para persistencia do token
+
+5.2) Perfis de usuario:
+
+| Perfil   | Usuario  | Senha    | Permissoes                                    |
+|----------|----------|----------|-----------------------------------------------|
+| ADMIN    | admin    | admin123 | Acesso total, gerenciar usuarios e dispositivos|
+| OPERATOR | operador | oper123  | Visualizar, operar alertas, cadastrar beacons  |
+
+5.3) Endpoints de autenticacao:
+- POST /api/auth/login     -> autenticar e receber token JWT
+- POST /api/auth/register  -> registrar novo usuario (somente admin)
+- GET  /api/auth/me        -> consultar dados do usuario logado
+
+5.4) Fluxo de autenticacao:
+1) Usuario informa credenciais na tela de login do app;
+2) Backend valida credenciais e retorna token JWT;
+3) Token e armazenado no dispositivo (AsyncStorage);
+4) Todas as requisicoes subsequentes enviam o token no header Authorization;
+5) Backend valida o token em cada requisicao protegida;
+6) Endpoint de leituras de sensores (POST /api/sensors/readings) e publico
+   para permitir comunicacao direta dos dispositivos IoT.
+
+IMPORTANTE: As credenciais acima sao para desenvolvimento.
+Em producao, altere todas as senhas e o JWT secret.
+
+
+6. BANCO DE DADOS
+
+O sistema utiliza dois perfis de banco de dados:
+
+6.1) Desenvolvimento (H2 em Memoria):
+- URL: jdbc:h2:mem:pulselinkdb
+- Console web: http://localhost:8080/h2-console
+- Usuario: sa / Senha: (vazio)
+- Dados recriados automaticamente a cada reinicio (ddl-auto: create-drop)
+
+6.2) Producao (PostgreSQL):
+- Script de criacao: database/create_database.sql
+- Banco: pulselinkdb
+- 4 tabelas: users, devices, sensor_readings, alerts
+- Indices otimizados para consultas frequentes
+- Constraints de integridade (PK, FK, UNIQUE, CHECK)
+- Dados iniciais incluidos no script
+
+Tabelas do sistema:
+- users           -> cadastro de operadores e administradores
+- devices         -> registro dos beacons (dispositivos IoT)
+- sensor_readings -> historico de leituras dos sensores
+- alerts          -> alertas de emergencia gerados automatica ou manualmente
+
+
+7. BENEFICIOS ESPERADOS
+
+- Reducao do tempo de resposta em emergencias remotas;
+- Acionamento automatico de socorro em casos sem intervencao humana;
+- Maior visibilidade para equipes de campo e centros operacionais;
+- Rastreabilidade completa de eventos e historico de incidentes;
+- Controle de acesso com autenticacao segura (JWT);
+- Base tecnica para evoluir da simulacao para satelite e hardware reais.
+
+
+8. PLANO DE TESTES
+
+O sistema possui um plano de testes documentado em docs/plano_de_testes.md
+com 68 cenarios de teste organizados nas seguintes categorias:
+
+- Autenticacao (12 cenarios)
+- Dispositivos (9 cenarios)
+- Alertas (10 cenarios)
+- Leituras de Sensores (10 cenarios)
+- Integracao end-to-end (7 cenarios)
+- Frontend mobile (12 cenarios)
+- Simulador IoT (8 cenarios)
+
+
+9. RESULTADO DO MVP
+
+O MVP comprova o ciclo completo de valor:
+
+Simulacao IoT -> Backend REST -> Autenticacao JWT -> Persistencia -> Monitoramento Mobile.
+
+Isso demonstra viabilidade tecnica da proposta de conectividade e resposta a emergencias para regioes remotas, alinhada ao tema de comunicacao satelital em cenarios sem infraestrutura convencional.
+
+Arquivos de referencia:
+- Credenciais de desenvolvimento: credenciais_dev.txt
+- Script SQL do banco:           database/create_database.sql
+- Plano de testes:                docs/plano_de_testes.md
