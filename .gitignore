@@ -29,3 +29,13 @@ CREDENCIAIS*.txt
 # --- OS ---
 .DS_Store
 Thumbs.db
+
+# Build Java e chaves
+target/
+out/
+*.class
+*.pem
+*.key
+*.p12
+*.pfx
+.git-local-backup/
